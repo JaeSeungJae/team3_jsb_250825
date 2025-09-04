@@ -6,6 +6,8 @@ import com.back.domain.question.question.entity.Question;
 import com.back.domain.question.question.repository.QuestionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,8 @@ public class QuestionService {
     public List<Question> findAll() {
         return questionRepository.findAll();
     }
+
+    public Page<Question> findAllPage(Pageable pageable) {return questionRepository.findAll(pageable);}
 
     public long count() {
         return questionRepository.count();
@@ -48,10 +52,10 @@ public class QuestionService {
         return questionRepository.save(question);
     }
 
-    public List<Question> search(String kwType, String kw) {
-        if ("subject".equals(kwType)) return questionRepository.findBySubjectContaining(kw);
-        if ("content".equals(kwType)) return questionRepository.findByContentContaining(kw);
+    public Page<Question> search(String kwType, String kw, Pageable pageable) {
+        if ("subject".equals(kwType)) return questionRepository.findBySubjectContaining(kw, pageable);
+        if ("content".equals(kwType)) return questionRepository.findByContentContaining(kw, pageable);
 
-        return questionRepository.findBySubjectContainingOrContentContaining(kw, kw);
+        return questionRepository.findBySubjectContainingOrContentContaining(kw, kw, pageable);
     }
 }

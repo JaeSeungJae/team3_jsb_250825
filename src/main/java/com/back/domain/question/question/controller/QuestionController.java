@@ -8,6 +8,10 @@ import com.back.domain.question.question.entity.Question;
 import com.back.domain.question.question.service.QuestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +20,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 
 @RequestMapping("/questions")
 @Controller
@@ -29,13 +32,15 @@ public class QuestionController {
     @GetMapping("/list")
     public String showList(
             @ModelAttribute("search") QuestionSearchDto search,
+            @RequestParam(value = "page", defaultValue = "0") int page,
             Model model
     ) {
-        List<Question> questions;
+        Page<Question> questions;
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "id"));
         if (search.getKw().equals("all") && search.getKwType().isEmpty()) {
-            questions = questionService.findAll();
+            questions = questionService.findAllPage(pageable);
         } else {
-            questions = questionService.search(search.getKwType(), search.getKw());
+            questions = questionService.search(search.getKwType(), search.getKw(), pageable);
         }
         model.addAttribute("questions", questions);
         return "question/question/list";

@@ -70,6 +70,31 @@
                 </tbody>
             </table>
         </div>
+        <!-- 페이지네이션 -->
+        <div class="mt-6 flex justify-center space-x-2">
+            <!-- 이전 버튼 -->
+            <a th:if="${questions.hasPrevious()}"
+               th:href="@{/questions/list(page=${questions.number - 1}, kw=${search.kw}, kwType=${search.kwType})}"
+               class="px-4 py-2 rounded-lg border bg-white text-gray-600 hover:bg-gray-100">
+                이전
+            </a>
+
+            <!-- 페이지 번호 -->
+            <span th:each="pageNum : ${#numbers.sequence(0, questions.totalPages - 1)}">
+                <a th:href="@{/questions/list(page=${pageNum}, kw=${search.kw}, kwType=${search.kwType})}"
+                   th:text="${pageNum + 1}"
+                   th:classappend="${pageNum == questions.number} ? 'bg-indigo-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-100'"
+                   class="px-3 py-2 rounded-lg border">
+                </a>
+            </span>
+
+            <!-- 다음 버튼 -->
+            <a th:if="${questions.hasNext()}"
+               th:href="@{/questions/list(page=${questions.number + 1}, kw=${search.kw}, kwType=${search.kwType})}"
+               class="px-4 py-2 rounded-lg border bg-white text-gray-600 hover:bg-gray-100">
+                다음
+            </a>
+        </div>
     </main>
 </div>
 </html>
